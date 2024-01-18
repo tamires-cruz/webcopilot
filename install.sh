@@ -23,7 +23,6 @@ sudo apt-get install golang-go -y 2> /dev/null
 sudo apt install snapd -y 2> /dev/null
 sudo apt install cmake -y 2> /dev/null
 sudo apt install jq -y 2> /dev/null
-sudo apt install gobuster -y 2> /dev/null
 sudo snap install chromium 2> /dev/null
 sudo apt-get install -y parallel 2> /dev/null
 sleep 2s
@@ -34,7 +33,6 @@ cd && git clone https://github.com/aboul3la/Sublist3r.git ~/tools/Sublist3r && c
 cd && git clone https://github.com/sqlmapproject/sqlmap.git ~/tools/sqlmap/ 2> /dev/null
 cd && git clone https://github.com/ameenmaali/urldedupe.git ~/tools/urldedupe && cd ~/tools/urldedupe && cmake CMakeLists.txt && make && mv urldedupe /usr/bin/ 2> /dev/null
 cd && git clone https://github.com/devanshbatham/OpenRedireX.git ~/tools/OpenRedireX && cd ~/tools/OpenRedireX && sudo pip3 install -r requirements.txt
-cd ~/tools/ && wget https://github.com/findomain/findomain/releases/latest/download/findomain-linux && chmod +x findomain-linux && mv findomain-linux /usr/bin/findomain 2> /dev/null
 cd && git clone https://github.com/devanshbatham/paramspider && cd paramspider && sudo pip install .
 echo "Installing Wordlists & Payloads"
 cd ~/wordlists/ && wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/big.txt
