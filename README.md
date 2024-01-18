@@ -23,12 +23,11 @@
 
 **WebCopilot** is an automation tool designed to enumerate subdomains of the target and detect bugs using different open-source tools.
 
-The script first enumerate all the subdomains of the given target domain using assetfinder, sublister, subfinder, amass, findomain, hackertarget, riddler and crt then do active subdomain enumeration using gobuster from SecLists wordlist then filters out all the live subdomains using dnsx then it extract titles of the subdomains using httpx & scans for subdomain takeover using subjack. Then it uses gauplus & waybackurls to crawl all the endpoints of the given subdomains then it use gf patterns to filters out xss, lfi, ssrf, sqli, open redirect & rce parameters from that given subdomains, and then it scans for vulnerabilities on the subdomains using different open-source tools (like kxss, dalfox, openredirex, nuclei, etc). Then it'll print out the result of the scan and save all the output in a specified directory. 
+The script first enumerate all the subdomains of the given target domain using assetfinder, sublister, subfinder, riddler and crt then do active subdomain enumeration using gobuster from SecLists wordlist then filters out all the live subdomains using dnsx then it extract titles of the subdomains using httpx & scans for subdomain takeover using subjack. Then it uses gauplus & waybackurls to crawl all the endpoints of the given subdomains then it use gf patterns to filters out xss, lfi, ssrf, sqli, open redirect & rce parameters from that given subdomains, and then it scans for vulnerabilities on the subdomains using different open-source tools (like kxss, dalfox, openredirex, nuclei, etc). Then it'll print out the result of the scan and save all the output in a specified directory. 
 
 # Features
 
-- Subdomain Enumeration using [assetfinder](https://github.com/tomnomnom/assetfinder), [sublist3r](https://github.com/aboul3la/Sublist3r), [subfinder](https://github.com/projectdiscovery/subfinder), [amass](https://github.com/OWASP/Amass), [findomain](https://github.com/Findomain/Findomain), etc.
-- Active Subdomain Enumeration using [gobuster](https://github.com/OJ/gobuster) & [amass](https://github.com/OWASP/Amass) from [SecLists/DNS](https://github.com/danielmiessler/SecLists/tree/master/Discovery/DNS) wordlist.
+- Subdomain Enumeration using [assetfinder](https://github.com/tomnomnom/assetfinder), [sublist3r](https://github.com/aboul3la/Sublist3r), [subfinder](https://github.com/projectdiscovery/subfinder), etc.
 - Extract titles and take screenshots of live subdomains using [aquatone](https://github.com/michenriksen/aquatone) & [httpx](https://github.com/projectdiscovery/httpx).
 - Crawl all the endpoints of the subdomains using [waybackurls](https://github.com/tomnomnom/waybackurls) & [gauplus](https://github.com/bp0lr/gauplus) and filter out XSS, SQLi, SSRF, etc parameters using [gf patterns](https://github.com/tomnomnom/gf).
 - Run different open-source tools (like [dalfox](https://github.com/hahwul/dalfox), [nuclei](https://github.com/projectdiscovery/nuclei), [sqlmap](https://github.com/sqlmapproject/sqlmap), etc) to search for vulnerabilities on these parameters and then save all the outputs in the folder.
@@ -82,12 +81,10 @@ git clone https://github.com/h4r5h1t/webcopilot && cd webcopilot/ && chmod +x we
 <p align="center">
 <a href="https://github.com/projectdiscovery/subfinder">SubFinder</a> • 
 <a href="https://github.com/aboul3la/Sublist3r">Sublist3r</a> •
-<a href="https://github.com/Findomain/Findomain">Findomain</a> •
 <a href="https://github.com/tomnomnom/gf">gf</a> •
 <a href="https://github.com/devanshbatham/OpenRedireX">OpenRedireX</a> •
 <a href="https://github.com/projectdiscovery/dnsx">dnsx</a> •
 <a href="https://github.com/sqlmapproject/sqlmap">sqlmap</a> •
-<a href="https://github.com/OJ/gobuster">gobuster</a> •
 <a href="https://github.com/tomnomnom/assetfinder">assetfinder</a> •
 <a href="https://github.com/projectdiscovery/httpx">httpx</a> •
 <a href="https://github.com/Emoe/kxss">kxss</a> •
@@ -98,7 +95,6 @@ git clone https://github.com/h4r5h1t/webcopilot && cd webcopilot/ && chmod +x we
 <a href="https://github.com/stedolan/jq">jq</a> •
 <a href="https://github.com/michenriksen/aquatone">aquatone</a> •
 <a href="https://github.com/ameenmaali/urldedupe">urldedupe</a> •
-<a href="https://github.com/OWASP/Amass">Amass</a> •
 <a href="https://github.com/bp0lr/gauplus">gauplus</a> •
 <a href="https://github.com/tomnomnom/waybackurls">waybackurls</a> •
 <a href="https://github.com/dwisiswant0/crlfuzz">crlfuzz</a>
@@ -112,10 +108,6 @@ g!2m0:~ webcopilot -d bugcrowd.com
 The `-o` command can be used to specify an output dir.
 ```bash
 g!2m0:~ webcopilot -d bugcrowd.com -o bugcrowd
-```
-The `-s` command can be used for only subdomain enumerations (Active + Passive and also get title & screenshots).
-```bash
-g!2m0:~ webcopilot -d bugcrowd.com -o bugcrowd -s 
 ```
 The `-t` command can be used to add thrads to your scan for faster result.
 ```bash
@@ -168,13 +160,6 @@ Time:    30-08-2021 15:10:00
 [●] Subdomain Scanned  -  [assetfinder✔]                 Subdomain Found: 34
 [●] Subdomain Scanned  -  [sublist3r✔]                   Subdomain Found: 29
 [●] Subdomain Scanned  -  [subfinder✔]                   Subdomain Found: 54
-[●] Subdomain Scanned  -  [amass✔]                       Subdomain Found: 43
-[●] Subdomain Scanned  -  [findomain✔]                   Subdomain Found: 27
-
-[●] Active Subdomain Scanning is in progress:
-[!] Please be patient. This may take a while...
-[●] Active Subdomain Scanned  -  [gobuster✔]             Subdomain Found: 11
-[●] Active Subdomain Scanned  -  [amass✔]                Subdomain Found: 0
 
 [●] Subdomain Scanning: Filtering out of scope subdomains
 [●] Subdomain Scanning: Filtering Alive subdomains
