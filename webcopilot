@@ -153,34 +153,15 @@ subenum() {
     subfinder -silent -d $domain -all -t $threads -o temp/subfinder.txt &> /dev/null
     echo -e "\033[2A"
     echo -ne "${NORMAL}${BOLD}${SORANGE}\n[●] Subdomain Scanned  -  ${NORMAL}[${GREEN}subfinder${TICK}${NORMAL}]${TTAB} Subdomain Found: ${LGREEN}$(cat temp/subfinder.txt 2> /dev/null | wc -l )"
-    echo -ne "${NORMAL}${BOLD}${YELLOW}\n[●] Subdomain Scanning  -  ${NORMAL}[${LRED}${BLINK}amass${NORMAL}]"
-    amass enum -passive -norecursive -d $domain -o temp/amass.txt &> /dev/null
     echo -e "\033[2A"
-    echo -ne "${NORMAL}${BOLD}${SORANGE}\n[●] Subdomain Scanned  -  ${NORMAL}[${GREEN}amass${TICK}${NORMAL}]${TTAB} Subdomain Found: ${LGREEN}$(cat temp/amass.txt 2> /dev/null | wc -l )"
     echo -ne "${NORMAL}${BOLD}${YELLOW}\n[●] Subdomain Scanning  -  ${NORMAL}[${LRED}${BLINK}findomain${NORMAL}]"
     findomain -r -q -t $domain | anew -q temp/findomain.txt &> /dev/null
     echo -e "\033[2A"
     echo -ne "${NORMAL}${BOLD}${SORANGE}\n[●] Subdomain Scanned  -  ${NORMAL}[${GREEN}findomain${TICK}${NORMAL}]${TTAB} Subdomain Found: ${LGREEN}$(cat temp/findomain.txt 2> /dev/null | wc -l )\n"
-    curl -s "https://api.hackertarget.com/hostsearch/?q=$domain" | cut -d ',' -f1 | anew -q temp/hackertarget.txt &> /dev/null
     curl -s "https://riddler.io/search/exportcsv?q=pld:$domain" | cut -d ',' -f6 | sed 's/Keywords//' | sed '/^$/d' | anew -q temp/riddler.txt &> /dev/null
     curl -s "https://crt.sh/?q=%25.$domain&output=json" | jq -r '.[].name_value' 2>/dev/null | sed 's/\*\.//g' | sort -u | anew -q temp/crtsh.txt &> /dev/null
 }
 
-active_subenum() {
-    echo -ne "${NORMAL}${BOLD}${YELLOW}\n[●] Active Subdomain Scanning is in progress:${NORMAL}\n"
-    echo -e "${NORMAL}${WHITE}${BOLD}${LRED}[!]${NORMAL}${WHITE}${BOLD}${LRED} Please be patient. This may take a while...${NORMAL}"
-    echo -ne "${NORMAL}${BOLD}${YELLOW}[●] Active Subdomain Scanning  -  ${NORMAL}[${RED}${BLINK}gobuster${NORMAL}]"
-    # ffuf -u http://FUZZ.$domain/ -t 200 -p 1.0-2.0 -w ~/wordlists/subdomains.txt -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36" -mc 200,403 -r -o temp/ffuf.json -s &> /dev/null
-    # cat temps/ffuf.json | jq -r '.results[] | {status:.status, host:.host} | .host' 2> /dev/null | anew -q temp/active_ffuf.txt
-    gobuster dns -d $domain -w ~/wordlists/subdomains.txt -t $threads --timeout 3s -q -o  temp/active_gobuster.txt
-    echo -e "\033[1A"
-    echo -ne "${NORMAL}${BOLD}${SORANGE}[●] Active Subdomain Scanned  -  ${NORMAL}[${GREEN}gobuster${TICK}${NORMAL}]${DTAB} Subdomain Found: ${RED}$(cat temp/active_gobuster.txt 2> /dev/null | wc -l )"
-    echo -ne "${NORMAL}${BOLD}${YELLOW}\n[●] Active Subdomain Scanning  -  ${NORMAL}[${RED}${BLINK}amass${NORMAL}]"
-    timeout 22m amass enum -active -brute -w ~/wordlists/subdomains.txt -d $domain -o temp/active_amass.txt &> /dev/null
-    echo -e "\033[2A"
-    echo -ne "${NORMAL}${BOLD}${SORANGE}\n[●] Active Subdomain Scanned  -  ${NORMAL}[${GREEN}amass${TICK}${NORMAL}]${DTAB} Subdomain Found: ${RED}$(cat temp/active_amass.txt 2> /dev/null | wc -l )\n"
-}
-    
 subfiltering() {    
     echo -ne "\n${NORMAL}${BOLD}${YELLOW}[●] Subdomain Scanning:${NORMAL}${BOLD} Filtering out of scope subdomains\r"
     cat temp/*.txt | grep -v "*" | sed '/@\|<BR>\|\_\|*/d' | grep "$domain" | anew -q subdomains/domains.txt
@@ -209,9 +190,11 @@ title() {
 
 parammine() {
     echo -ne "\n${NORMAL}${BOLD}${YELLOW}[●] Endpoints Scanning:${NORMAL}${BOLD} Getting all endpoints\r"
-    cat subdomains/alivesub.txt | gauplus --random-agent -b eot,jpg,jpeg,gif,css,tif,tiff,png,ttf,otf,woff,woff2,ico,pdf,svg,txt -t $threads -o temp/gauplus.txt
+    cat subdomains/alivesub.txt | httpx --silent | gauplus --random-agent -b eot,jpg,jpeg,gif,css,tif,tiff,png,ttf,otf,woff,woff2,ico,pdf,svg -t $threads -o temp/gauplus.txt
     cat subdomains/alivesub.txt | waybackurls | anew -q temp/waybackurls.txt
-    cat temp/gauplus.txt temp/waybackurls.txt 2> /dev/null | sed '/\[/d' | grep $domain | sort -u | urldedupe -s | anew -q subdomains/endpoints.txt
+    cat subdomains/alivesub.txt | katana | anew -q temp/katana.txt
+    paramspider -l subdomains/alivesub.txt
+    cat temp/gauplus.txt temp/waybackurls.txt temp/katana.txt results/* 2> /dev/null | sed '/\[/d' | grep $domain | sort -u | urldedupe -s | anew -q subdomains/endpoints.txt
 }
 
 gfpt(){
