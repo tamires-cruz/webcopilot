@@ -137,7 +137,6 @@ info() {
     if [ -z "$onlysub" ];then echo -e "${NORMAL}${WHITE}Mode: ${GREEN}${TSPACE}Running all Enumeration${NORMAL}"; else echo -e "${NORMAL}${WHITE}Mode: ${GREEN}${TSPACE}Subdomain Enumeration${NORMAL}"; fi
     echo -e "${NORMAL}${WHITE}Time: ${DGRAY}${TSPACE}$(date "+%d-%m-%Y %H:%M:%S")${NORMAL}"
     echo -e "\n${NORMAL}${WHITE}${BLINK}${BOLD}${LRED}[!]${NORMAL}${WHITE}${BOLD}${LRED} Please wait while scanning...${NORMAL}"
-    # echo -e "${NORMAL}${WHITE}${BLINK}${BOLD}${LRED}[!]${NORMAL}${WHITE}${BOLD}${LRED} This may take a while...${NORMAL}"
 }
 
 subenum() {
@@ -154,10 +153,6 @@ subenum() {
     echo -e "\033[2A"
     echo -ne "${NORMAL}${BOLD}${SORANGE}\n[●] Subdomain Scanned  -  ${NORMAL}[${GREEN}subfinder${TICK}${NORMAL}]${TTAB} Subdomain Found: ${LGREEN}$(cat temp/subfinder.txt 2> /dev/null | wc -l )"
     echo -e "\033[2A"
-    echo -ne "${NORMAL}${BOLD}${YELLOW}\n[●] Subdomain Scanning  -  ${NORMAL}[${LRED}${BLINK}findomain${NORMAL}]"
-    findomain -r -q -t $domain | anew -q temp/findomain.txt &> /dev/null
-    echo -e "\033[2A"
-    echo -ne "${NORMAL}${BOLD}${SORANGE}\n[●] Subdomain Scanned  -  ${NORMAL}[${GREEN}findomain${TICK}${NORMAL}]${TTAB} Subdomain Found: ${LGREEN}$(cat temp/findomain.txt 2> /dev/null | wc -l )\n"
     curl -s "https://riddler.io/search/exportcsv?q=pld:$domain" | cut -d ',' -f6 | sed 's/Keywords//' | sed '/^$/d' | anew -q temp/riddler.txt &> /dev/null
     curl -s "https://crt.sh/?q=%25.$domain&output=json" | jq -r '.[].name_value' 2>/dev/null | sed 's/\*\.//g' | sort -u | anew -q temp/crtsh.txt &> /dev/null
 }
@@ -301,8 +296,6 @@ subScan(){
     echo -ne "${NORMAL}${BOLD}${YELLOW}\n[●] Subdomain Enumeration is in progress:${NORMAL}${BOLD} Scanning subdomains of ${RED}$domain${NORMAL}\r"
     sleep 1s
     subenum
-    sleep 2s
-    active_subenum
     sleep 2s
     subfiltering
     sleep 2s
